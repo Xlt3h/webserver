@@ -1,0 +1,41 @@
+2025-05-28 19:36:34  [NORMAL] : Starting the server!!!
+2025-05-28 19:36:34  [ERROR] : Can't bind the address exiting
+2025-05-28 19:36:39  [NORMAL] : Starting the server!!!
+2025-05-28 19:36:39  [ERROR] : Can't bind the address exiting
+2025-05-28 19:38:12  [NORMAL] : Starting the server!!!
+2025-05-28 19:38:12  [ERROR] : Can't bind the address exiting
+2025-05-28 19:40:49  [NORMAL] : Starting the server!!!
+2025-05-28 19:40:49  [ERROR] : Can't bind the address exiting
+2025-05-28 19:40:59  [NORMAL] : Starting the server!!!
+2025-05-28 19:40:59  [ERROR] : Can't bind the address exiting
+2025-05-28 19:41:00  [NORMAL] : Starting the server!!!
+2025-05-28 19:41:00  [ERROR] : Can't bind the address exiting
+2025-05-28 19:41:01  [NORMAL] : Starting the server!!!
+2025-05-28 19:41:01  [ERROR] : Can't bind the address exiting
+2025-05-28 19:52:27  [NORMAL] : Starting the server!!!
+2025-05-28 19:52:27  [ERROR] : Can't bind the address exiting
+2025-05-28 19:53:16  [NORMAL] : Starting the server!!!
+2025-05-28 19:53:16  [ERROR] : Can't bind the address exiting
+2025-05-28 19:55:46  [NORMAL] : Starting the server!!!
+2025-05-28 19:55:46  [ERROR] : Can't bind the address exiting
+2025-05-28 20:00:48  [WARNING] : Illegal server configuration: worker_processes=8
+
+2025-05-28 20:00:48  [WARNING] : Illegal server configuration: root=../static
+
+2025-05-28 20:00:48  [WARNING] : Illegal server configuration: log=./logs/access.log
+
+2025-05-28 20:00:48  [NORMAL] : Starting the server!!!
+2025-05-28 20:04:31  [WARNING] : Illegal server configuration: worker_processes=8
+
+2025-05-28 20:04:31  [WARNING] : Illegal server configuration: root=../static
+
+2025-05-28 20:04:31  [WARNING] : Illegal server configuration: log=./logs/access.log
+
+2025-05-28 20:04:31  [NORMAL] : Starting the server!!!
+2025-05-28 20:19:59  [WARNING] : Illegal server configuration: worker_processes=8
+
+2025-05-28 20:19:59  [WARNING] : Illegal server configuration: root=../static
+
+2025-05-28 20:19:59  [WARNING] : Illegal server configuration: log=./logs/access.log
+
+2025-05-28 20:19:59  [NORMAL] : Starting the server!!!
