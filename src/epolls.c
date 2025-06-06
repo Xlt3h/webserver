@@ -6,10 +6,10 @@ int set_non_block(int fd)
     if (fcntl(fd, F_SETFL, get_flags | O_NONBLOCK) < 0)
     {
         write_log("cannot set the file descriptor to non block", ERROR);
-        exit(EXIT_FAILURE);
+        return -1;
         //return EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
+    return 0;
 }
 int create_epoll()
 {
@@ -17,7 +17,7 @@ int create_epoll()
     if (epfd < 0)
     {
         write_log("cannot start the epoll", ERROR);
-        exit(EXIT_FAILURE);
+        return -1;
         //return EXIT_FAILURE;
     }
     return epfd;
@@ -28,7 +28,7 @@ int add_epoll(int epfd, int fd, struct epoll_event event)
     if (epfdctl < 0)
     {
         write_log("cannot add the event to the epoll", ERROR);
-        exit(EXIT_FAILURE);
+        return -1;
         //return EXIT_FAILURE;
     }
     return epfdctl;

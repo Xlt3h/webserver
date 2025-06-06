@@ -1,7 +1,7 @@
 #ifndef EPOLLS_H
 #define EPOLLS_H
 #include <sys/epoll.h>
-#include "log.c"
+#include "log.h"
 #include <fcntl.h>
 int set_non_block(int fd);
 int create_epoll();

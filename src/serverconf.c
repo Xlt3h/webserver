@@ -37,7 +37,7 @@ conf *read_conf(const char *conf_file)
                 server_conf->port = atoi(value);
                 printf("%d", server_conf->port);
             }
-            else if (strcmp(key, "work_processes") == 0)
+            else if (strcmp(key, "worker_processes") == 0)
             {
                 server_conf->work_processes = atol(value);
             }

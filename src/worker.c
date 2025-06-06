@@ -24,7 +24,7 @@ int worker_init()
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(config_load->port);
 
-    if (bind(sock, (struct sockaddr *)&server_addr, 0) < 0)
+    if (bind(sock, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {
         write_log("cannot bind the socket !!!", ERROR);
         return EXIT_FAILURE;
@@ -40,13 +40,13 @@ int worker_init()
     return sock;
 }
 
-int worker_handle()
+int worker_handle(int sockfd)
 {
     // define client
     struct sockaddr_in client_addr;
     socklen_t client_addr_socklen = sizeof(client_addr);
 
-    int sock = worker_init();
+    int sock = sockfd;
     set_non_block(sock);
     int epfd = create_epoll();
     struct epoll_event event;
@@ -55,48 +55,72 @@ int worker_handle()
     event.events = EPOLLIN | EPOLLET;
     int epoll_controller = add_epoll(epfd, sock, event);
     write_log("Adding socket to epoll is successfull !!!", NORMAL);
-    int* accept_fd = NULL;
+
     while (1)
     {
-        int number_of_event = epoll_wait(epfd, &events, MAX_POOL, -1);
+        int number_of_event = epoll_wait(epfd, (struct epoll_event *)&events, MAX_POOL, -1);
         for (int i = 0; i < number_of_event; i++)
         {
-            if (events[i].events == EPOLLIN) // new connection trying to connect
+            if (events[i].events & EPOLLIN) // new connection trying to connect
             {
-                while (1)
+                if (events[i].data.fd == sock)
                 {
-                    int accept_clients_fd = accept(sock, (struct sockaddr *)&client_addr, &client_addr_socklen);
-                    accept_fd = &accept_clients_fd;
-                    if (accept_clients_fd < 0)
+                    while (1)
                     {
-                        if (errno == EAGAIN || errno == EWOULDBLOCK)
+                        int accept_clients_fd = accept(sock, (struct sockaddr *)&client_addr, &client_addr_socklen);
+
+                        if (accept_clients_fd < 0)
                         {
-                            write_log("Accepted all connections", NORMAL);
-                            break;
+                            if (errno == EAGAIN || errno == EWOULDBLOCK)
+                            {
+                                write_log("Accepted all connections", NORMAL);
+                                break;
+                            }
+                            else
+                            {
+                                write_log("cannot accept incoming connections", ERROR);
+                                return EXIT_FAILURE;
+                            }
                         }
-                        else
+                        set_non_block(accept_clients_fd);
+                        event.data.fd = accept_clients_fd;
+                        add_epoll(epfd, accept_clients_fd, event);
+                        char addr_str[INET_ADDRSTRLEN];
+                        // memset(addr_str,0,128);
+                        inet_ntop(AF_INET, &client_addr.sin_addr, addr_str, INET_ADDRSTRLEN);
+                        char accept_ip_log[50];
+                        // snprintf("Accepted connection from %s", sizeof(accept_ip_log), accept_ip_log, addr_str);
+                        snprintf(accept_ip_log, sizeof(accept_ip_log), "Accepted connection from %s", addr_str);
+                        write_log(accept_ip_log, NORMAL);
+                        //char msg[128];
+                        //strcpy(msg, "hey welcome we are using a epoll for this server faster boy!!!");
+                        //send(accept_clients_fd, msg, 128, 0);
+                    }
+                }
+                else // to handle clients that have already connected
+                {
+                    write_log("inside the recving", NORMAL);
+                    char recv_request[2048];
+                    ssize_t n = recv(events[i].data.fd, recv_request, sizeof(recv_request), 0);
+                    if (n > 0)
+                    {
+                        recv_request[n] = '\0'; // null-terminate the buffer
+                        parse_the_http(recv_request, events[i].data.fd);
+                    }
+                    else if (n == 0)
+                    {
+                        close(events[i].data.fd);
+                        write_log("Client disconnected", NORMAL);
+                    }
+                    else
+                    {
+                        if (errno != EAGAIN && errno != EWOULDBLOCK)
                         {
-                            write_log("cannot accept incoming connections", ERROR);
-                            return EXIT_FAILURE;
+                            write_log("recv error", ERROR);
+                            close(events[i].data.fd);
                         }
                     }
-                    set_non_block(accept_clients_fd);
-                    event.data.fd = accept_clients_fd;
-                    add_epoll(epfd,accept_clients_fd,event);
-                    char addr_str[INET_ADDRSTRLEN];
-                    //memset(addr_str,0,128);
-                    inet_ntop(AF_INET,&client_addr.sin_addr, addr_str,INET_ADDRSTRLEN);
-                    char accept_ip_log[50];
-                    snprintf("Accepted connection from %s",sizeof(accept_ip_log),accept_ip_log ,addr_str);
-                    write_log(accept_ip_log,NORMAL);
-
                 }
-            }
-            else // to handle clients that have already connected
-            {
-                const char* recv_request[2048];
-                recv(accept_fd ,recv_request,sizeof(recv_request),0);
-                parse_the_http(recv_request, accept_fd);
             }
         }
     }
