@@ -1,7 +1,8 @@
 #ifndef LOG_H
 #define LOG_H
 
-typedef enum{
+typedef enum
+{
     WARNING,
     NORMAL,
     ERROR
@@ -9,5 +10,5 @@ typedef enum{
 
 #define LOG_FILE "/home/rich/Documents/cplus/webserver/watch.log"
 
-int write_log(char* message , type_log type_of_log);
+int write_log(char *message, type_log type_of_log);
 #endif

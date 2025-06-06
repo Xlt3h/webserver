@@ -1,0 +1,50 @@
+so nginx is a webserver that reads the configuration and then it has a master and that master manages workers right? 
+and those workers use shared socket?
+
+
+Exactly! You got it.
+
+---
+
+### To recap and clarify:
+
+* **`event.events`** is where you specify **what kind of events you want to monitor** on a file descriptor.
+
+  Examples of event types you can monitor:
+
+  * `EPOLLIN` — data available to read (input)
+  * `EPOLLOUT` — ready for writing (output)
+  * `EPOLLERR` — error condition happened
+  * `EPOLLHUP` — hang up (e.g., closed connection)
+  * `EPOLLET` — enable **edge-triggered** behavior (more efficient but tricky)
+  * etc.
+
+---
+
+### What you wrote:
+
+> *"events it's any event like literally any"*
+
+Not quite — you choose the event types you're interested in. If you want to catch **any event**, you could combine flags with a bitwise OR like:
+
+```c
+event.events = EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP;
+```
+
+But usually, you only monitor the specific events you care about to avoid unnecessary wake-ups.
+
+---
+
+### Why do we need this `event` structure?
+
+* Because epoll supports monitoring **many different file descriptors** for **many different kinds of events** at once.
+* Each `event` struct tells epoll:
+
+  * **Which file descriptor** (stored in `event.data.fd`)
+  * **Which events** to watch for (stored in `event.events`)
+
+So yes — **you create and configure this `event` struct to tell epoll exactly what to watch for on a given FD.**
+
+---
+
+If you want, I can explain more about these event types or how to use them for common cases!
