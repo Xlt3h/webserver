@@ -1,12 +1,12 @@
 # Nginx Liter from scratch
 
  - logging has been disabled since its blocking 
-## with blocking i/o log
+
+# with non blocking i/o logging and sendfile
+
 ```bash
 wrk -t16 -c10000 -d60s --latency http://127.0.0.1:5066
 ```
-
-# with non blocking i/o logging and sendfile
 
 | Metric         | Small Response      | Big Response (`sendfile()`) |
 | -------------- | ------------------- | --------------------------- |
