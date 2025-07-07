@@ -7,7 +7,7 @@ void parse_the_http(char *request, int sfd)
     snprintf(logmsg, sizeof(logmsg), "Responding to request on fd %d", sfd);
     write_log(logmsg, NORMAL);
 
-    const char *file_path = "/home/rich/Documents/cplus/webserver/static/bigpage.html";
+    const char *file_path = "./static/bigpage.html";
 
     char first_line[256], method[16], path[128], http_version[16];
     if (sscanf(request, "%[^\r\n]", first_line) == 1 &&
